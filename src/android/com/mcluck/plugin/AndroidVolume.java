@@ -16,11 +16,17 @@ public class AndroidVolume extends CordovaPlugin {
 		JSONArray args,
 		CallbackContext callbackContext
 	) throws JSONException {
-		if ("set".equals(action)) {
-			setAllVolumes(args.getInt(0), args.getBoolean(1), callbackContext);
+		if ("setAccessibility".equals(action)) {
+			setAccessibilityVolume(args.getInt(0), args.getBoolean(1), callbackContext);
 			return true;
 		} else if ("setAlarm".equals(action)) {
 			setAlarmVolume(args.getInt(0), args.getBoolean(1), callbackContext);
+			return true;
+		} else if ("setAll".equals(action)) {
+			setAllVolumes(args.getInt(0), args.getBoolean(1), callbackContext);
+			return true;
+		} else if ("setDTMF".equals(action)) {
+			setDTMFVolume(args.getInt(0), args.getBoolean(1), callbackContext);
 			return true;
 		} else if ("setMusic".equals(action)) {
 			setMusicVolume(args.getInt(0), args.getBoolean(1), callbackContext);
@@ -34,113 +40,114 @@ public class AndroidVolume extends CordovaPlugin {
 		} else if ("setSystem".equals(action)) {
 			setSystemVolume(args.getInt(0), args.getBoolean(1), callbackContext);
 			return true;
+		} else if ("setVoiceCall".equals(action)) {
+			setVoiceCallVolume(args.getInt(0), args.getBoolean(1), callbackContext);
+			return true;
 		}
 
 		return false;
 	}
 
-	private void setAllVolumes(
+	public void setVolume(
+		int streamType,
+		String volumeType,
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		setAlarmVolume(volume, false, callbackContext);
-		setMusicVolume(volume, false, callbackContext);
-		setNotificationVolume(volume, false, callbackContext);
-		setRingerVolume(volume, false, callbackContext);
-		setSystemVolume(volume, false, callbackContext);
+		AudioManager manager = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
+		manager.setStreamVolume(streamType, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 		if (showToast) {
+			if (volumeType.length() > 0) {
+				volumeType += " ";
+			}
 			Toast.makeText(
 				webView.getContext(),
-				"Volume: " + String.valueOf(volume),
+				volumeType + "Volume: " + String.valueOf(volume),
 				Toast.LENGTH_LONG
 			).show();
 		}
-		callbackContext.success(volume);
+		if (callbackContext != null) {
+			callbackContext.success(volume);
+		}
 	}
 
-	private void setMusicVolume(
+	public void setAllVolumes(
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager mgr = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		mgr.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			Toast.makeText(
-				webView.getContext(),
-				"Music Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		callbackContext.success(volume);
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "", volume, false, null);
+		setVolume(AudioManager.STREAM_ALARM, "", volume, false, null);
+		setVolume(AudioManager.STREAM_DTMF, "", volume, false, null);
+		setVolume(AudioManager.STREAM_MUSIC, "", volume, false, null);
+		setVolume(AudioManager.STREAM_NOTIFICATION, "", volume, false, null);
+		setVolume(AudioManager.STREAM_RING, "", volume, false, null);
+		setVolume(AudioManager.STREAM_SYSTEM, "", volume, false, null);
+		setVolume(AudioManager.STREAM_VOICE_CALL, "", volume, showToast, callbackContext);
 	}
 
-	private void setRingerVolume(
+	public void setAccessibilityVolume(
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager mgr = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		mgr.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			Toast.makeText(
-				webView.getContext(),
-				"Ringer Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		callbackContext.success(volume);
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Accessibility", volume, showToast, callbackContext);
 	}
 
-	private void setAlarmVolume(
+	public void setAlarmVolume(
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager mgr = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		mgr.setStreamVolume(AudioManager.STREAM_ALARM, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			Toast.makeText(
-				webView.getContext(),
-				"Alarm Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		callbackContext.success(volume);
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Alarm", volume, showToast, callbackContext);
 	}
 
-	private void setSystemVolume(
+	public void setDTMFVolume(
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager mgr = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		mgr.setStreamVolume(AudioManager.STREAM_SYSTEM, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			Toast.makeText(
-				webView.getContext(),
-				"System Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		callbackContext.success(volume);
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "DTMF", volume, showToast, callbackContext);
 	}
 
-	private void setNotificationVolume(
+	public void setMusicVolume(
 		int volume,
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager mgr = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		mgr.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			Toast.makeText(
-				webView.getContext(),
-				"Notification Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		callbackContext.success(volume);
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Music", volume, showToast, callbackContext);
+	}
+
+	public void setNotificationVolume(
+		int volume,
+		boolean showToast,
+		CallbackContext callbackContext
+	) {
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Notification", volume, showToast, callbackContext);
+	}
+
+	public void setRingerVolume(
+		int volume,
+		boolean showToast,
+		CallbackContext callbackContext
+	) {
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Ringer", volume, showToast, callbackContext);
+	}
+
+	public void setSystemVolume(
+		int volume,
+		boolean showToast,
+		CallbackContext callbackContext
+	) {
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "System", volume, showToast, callbackContext);
+	}
+
+	public void setVoiceCallVolume(
+		int volume,
+		boolean showToast,
+		CallbackContext callbackContext
+	) {
+		setVolume(AudioManager.STREAM_ACCESSIBILITY, "Voice Call", volume, showToast, callbackContext);
 	}
 }
