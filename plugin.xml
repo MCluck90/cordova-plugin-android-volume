@@ -2,7 +2,7 @@
 <plugin id="cordova-plugin-android-volume" version="0.0.1" 
 xmlns="http://apache.org/cordova/ns/plugins/1.0" 
 xmlns:android="http://schemas.android.com/apk/res/android">
-    <name>AndroidVolume</name>
+    <name>Android Volume</name>
     <js-module name="AndroidVolume" src="www/AndroidVolume.js">
         <clobbers target="androidVolume" />
     </js-module>

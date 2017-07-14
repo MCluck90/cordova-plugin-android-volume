@@ -53,7 +53,13 @@ public class AndroidVolume extends CordovaPlugin {
 		CallbackContext callbackContext
 	) {
 		AudioManager manager = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		manager.setStreamVolume(streamType, volume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+		int max = manager.getStreamMaxVolume(streamType);
+		int newVolume = volume;
+		if (volume != 0) {
+			double percent = (double)volume / 100;
+			newVolume = (int)(max * percent);
+		}
+		manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
 		if (showToast) {
 			if (volumeType.length() > 0) {
 				volumeType += " ";
