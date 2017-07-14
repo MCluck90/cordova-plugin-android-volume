@@ -19,6 +19,13 @@ window.androidVolume.set(volume, showToast, success, error)
 // Set the alarm volume level
 window.androidVolume.setAlarm(volume, showToast, success, error)
 
+// Set all different types of volume to the same level
+// Alias for `set`
+window.androidVolume.setAll(volume, showToast, success, error)
+
+// Set the DTMF volume level
+window.androidVolume.setDTMF(volume, showToast, success, error)
+
 // Set the music/media volume level
 window.androidVolume.setMusic(volume, showToast, success, error)
 
@@ -30,4 +37,7 @@ window.androidVolume.setRinger(volume, showToast, success, error)
 
 // Set the system volume level
 window.androidVolume.setSystem(volume, showToast, success, error)
+
+// Set the voice call volume level
+window.androidVolume.setVoiceCall(volume, showToast, success, error)
 ```
