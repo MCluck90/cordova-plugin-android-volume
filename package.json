@@ -1,7 +1,11 @@
 {
-  "name": "AndroidVolume",
+  "name": "cordova-plugin-android-volume",
   "version": "0.0.1",
   "description": "Set the volume on Android devices",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MCluck90/cordova-plugin-android-volume"
+  },
   "cordova": {
     "id": "com-mcluck-plugins-androidvolume",
     "platforms": [
@@ -13,5 +17,5 @@
     "cordova-android"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }
