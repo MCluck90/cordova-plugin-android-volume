@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-android-volume",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Set the volume on Android devices",
   "repository": {
     "type": "git",
