@@ -1,8 +1,39 @@
 # Cordova Android Volume Plugin
 
-Very self-explanatory. Allows you to set the volume for Android devices in a Cordova app.
+Very self-explanatory. Allows you to get and set the volume for Android devices in a Cordova app.
 
 # API
+
+## Get Functions
+
+`success` is a callback called to return the volume. The first parameter is the volume level.
+
+`error` is a callback called if anything goes wrong. (Optional)
+
+```js
+// Get the alarm volume level
+window.androidVolume.getAlarm(success, error);
+
+// Get the DTMF volume level
+window.androidVolume.getDTMF(success, error);
+
+// Get the music/media volume level
+window.androidVolume.getMusic(success, error);
+
+// Get the notification volume level
+window.androidVolume.getNotification(success, error);
+
+// Get the ringer volume level
+window.androidVolume.getRinger(success, error);
+
+// Get the system volume level
+window.androidVolume.getSystem(success, error);
+
+// Get the voice call volume level
+window.androidVolume.getVoiceCall(success, error);
+```
+
+## Set Functions
 
 `volume` is an integer between 0 and 100.
 
