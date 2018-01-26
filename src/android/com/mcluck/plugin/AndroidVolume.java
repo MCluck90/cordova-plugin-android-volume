@@ -99,7 +99,7 @@ public class AndroidVolume extends CordovaPlugin {
 		int volume = manager.getStreamVolume(streamType);
 		if (volume != 0) {
 			double percent = (double)volume / (double)max;
-			volume = (int)(max * percent);
+			volume = (int)(max * 100);
 		}
 		callbackContext.success(volume);
 	}
