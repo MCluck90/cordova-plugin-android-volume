@@ -10,11 +10,7 @@ function createGetVolume(funcName) {
 
 function createSetVolume(funcName) {
 	return function(volume, showToast, success, error) {
-		if (arguments.length < 4) {
-			success = showToast;
-			error = success;
-			showToast = true;
-		}
+		showToast = showToast || false;
 		success = success || function(){};
 		error = error || function(){}
 		exec(success, error, 'AndroidVolume', funcName, [volume, showToast]);
