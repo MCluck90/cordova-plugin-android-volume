@@ -70,38 +70,52 @@ public class AndroidVolume extends CordovaPlugin {
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
-		AudioManager manager = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		int max = manager.getStreamMaxVolume(streamType);
-		int newVolume = volume;
-		if (volume != 0) {
-			double percent = (double)volume / 100;
-			newVolume = (int)(max * percent);
-		}
-		manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-		if (showToast) {
-			if (volumeType.length() > 0) {
-				volumeType += " ";
+        final Context context = this.cordova.getActivity();
+        final CallbackContext _callbackContext = callbackContext;
+
+		cordova.getThreadPool()
+		.execute(new Runnable() {
+			public void run() {
+				AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+				int max = manager.getStreamMaxVolume(streamType);
+				int newVolume = volume;
+				if (volume != 0) {
+					double percent = (double)volume / 100;
+					newVolume = (int)(max * percent);
+				}
+				manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				if (showToast) {
+					String volumeLabel = (volumeType.length() > 0 ? volumeType + " " : "") +  "Volume: " + String.valueOf(volume);
+					Toast.makeText(
+						webView.getContext(),
+						volumeLabel,
+						Toast.LENGTH_LONG
+					).show();
+				}
+				if (_callbackContext != null) {
+					_callbackContext.success(volume);
+				}
 			}
-			Toast.makeText(
-				webView.getContext(),
-				volumeType + "Volume: " + String.valueOf(volume),
-				Toast.LENGTH_LONG
-			).show();
-		}
-		if (callbackContext != null) {
-			callbackContext.success(volume);
-		}
+		});
 	}
 
 	public void getVolume(int streamType, CallbackContext callbackContext) {
-		AudioManager manager = (AudioManager)this.cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
-		int max = manager.getStreamMaxVolume(streamType);
-		int volume = manager.getStreamVolume(streamType);
-		if (volume != 0) {
-			double percent = (double)volume / (double)max;
-			volume = (int)Math.round(percent * 100);
-		}
-		callbackContext.success(volume);
+        final Context context = this.cordova.getActivity();
+        final CallbackContext _callbackContext = callbackContext;
+
+		cordova.getThreadPool()
+		.execute(new Runnable() {
+			public void run() {
+				AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+				int max = manager.getStreamMaxVolume(streamType);
+				int volume = manager.getStreamVolume(streamType);
+				if (volume != 0) {
+					double percent = (double)volume / (double)max;
+					volume = (int)Math.round(percent * 100);
+				}
+				_callbackContext.success(volume);
+			}
+		});
 	}
 
 	public void setAllVolumes(
