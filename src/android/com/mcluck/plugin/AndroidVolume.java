@@ -58,6 +58,9 @@ public class AndroidVolume extends CordovaPlugin {
 		} else if ("getVoiceCall".equals(action)) {
 			getVoiceCallVolume(callbackContext);
 			return true;
+		} else if ("getAlarm".equals(action)) {
+			getAlarmVolume(callbackContext);
+			return true;
 		}
 
 		return false;
