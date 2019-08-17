@@ -102,7 +102,7 @@ public class AndroidVolume extends CordovaPlugin {
 		});
 	}
 
-	public void getVolume(fnal int streamType, CallbackContext callbackContext) {
+	public void getVolume(final int streamType, CallbackContext callbackContext) {
         final Context context = this.cordova.getActivity();
         final CallbackContext _callbackContext = callbackContext;
 
