@@ -67,10 +67,10 @@ public class AndroidVolume extends CordovaPlugin {
 	}
 
 	public void setVolume(
-		int streamType,
-		String volumeType,
-		int volume,
-		boolean showToast,
+		final int streamType,
+		final String volumeType,
+		final int volume,
+		final boolean showToast,
 		CallbackContext callbackContext
 	) {
         final Context context = this.cordova.getActivity();
@@ -102,7 +102,7 @@ public class AndroidVolume extends CordovaPlugin {
 		});
 	}
 
-	public void getVolume(int streamType, CallbackContext callbackContext) {
+	public void getVolume(fnal int streamType, CallbackContext callbackContext) {
         final Context context = this.cordova.getActivity();
         final CallbackContext _callbackContext = callbackContext;
 
