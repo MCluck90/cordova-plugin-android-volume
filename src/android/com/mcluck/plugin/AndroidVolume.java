@@ -5,6 +5,7 @@ import org.apache.cordova.CallbackContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.media.AudioManager;
 import android.widget.Toast;
@@ -66,6 +67,15 @@ public class AndroidVolume extends CordovaPlugin {
 		return false;
 	}
 
+  private void setRingerMode(int ringerMode) {
+    Context c = this.cordova.getActivity();
+    NotificationManager n = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+    if(n.isNotificationPolicyAccessGranted()) {
+      AudioManager audioManager = (AudioManager) c.getSystemService(Context.AUDIO_SERVICE);
+      audioManager.setRingerMode(ringerMode);
+    }
+  }
+
 	public void setVolume(
 		final int streamType,
 		final String volumeType,
@@ -79,25 +89,32 @@ public class AndroidVolume extends CordovaPlugin {
 		cordova.getThreadPool()
 		.execute(new Runnable() {
 			public void run() {
-				AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-				int max = manager.getStreamMaxVolume(streamType);
-				int newVolume = volume;
-				if (volume != 0) {
-					double percent = (double)volume / 100;
-					newVolume = (int)(max * percent);
-				}
-				manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-				if (showToast) {
-					String volumeLabel = (volumeType.length() > 0 ? volumeType + " " : "") +  "Volume: " + String.valueOf(volume);
-					Toast.makeText(
-						webView.getContext(),
-						volumeLabel,
-						Toast.LENGTH_LONG
-					).show();
-				}
-				if (_callbackContext != null) {
-					_callbackContext.success(volume);
-				}
+        try{
+          AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+          int max = manager.getStreamMaxVolume(streamType);
+          int newVolume = volume;
+          if (volume != 0) {
+            double percent = (double)volume / 100;
+            newVolume = (int)(max * percent);
+          }
+          manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+          if (showToast) {
+            String volumeLabel = (volumeType.length() > 0 ? volumeType + " " : "") +  "Volume: " + String.valueOf(volume);
+            Toast.makeText(
+                webView.getContext(),
+                volumeLabel,
+                Toast.LENGTH_LONG
+            ).show();
+          }
+          if (_callbackContext != null) {
+            _callbackContext.success(volume);
+          }
+        }
+        catch(Exception e) {
+          if (_callbackContext != null) {
+            _callbackContext.error("Unable to set volume: " + e.getMessage());
+          }
+        }
 			}
 		});
 	}
@@ -192,6 +209,7 @@ public class AndroidVolume extends CordovaPlugin {
 		boolean showToast,
 		CallbackContext callbackContext
 	) {
+    setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 		setVolume(AudioManager.STREAM_RING, "Ringer", volume, showToast, callbackContext);
 	}
 
