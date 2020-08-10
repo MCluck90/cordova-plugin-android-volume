@@ -16,5 +16,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
         </config-file>
         <source-file src="src/android/com/mcluck/plugin/AndroidVolume.java"
                      target-dir="src/com/mcluck/plugin" />
+        <source-file src="src/android/com/mcluck/plugin/AndroidVolumeObserver.java"
+                     target-dir="src/com/mcluck/plugin" />
     </platform>
 </plugin>

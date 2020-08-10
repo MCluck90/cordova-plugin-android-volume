@@ -72,3 +72,13 @@ window.androidVolume.setSystem(volume, showToast, success, error)
 // Set the voice call volume level
 window.androidVolume.setVoiceCall(volume, showToast, success, error)
 ```
+
+## Events
+
+To get updates whenever the volume of the device changes, you may register for `volume` updates
+
+```js
+window.addEventListener('volume', function(ev) {
+    console.log("type " + ev.volumeType + ", level " + ev.volumeLevel);
+}, false);
+```
