@@ -63,7 +63,7 @@ AndroidVolume.prototype.getVoiceCall    = createGetVolume('getVoiceCall');
 
 AndroidVolume.prototype.set             = createSetVolume('setAll');
 AndroidVolume.prototype.setAlarm        = createSetVolume('setAlarm');
-AndroidVolume.prototype.setAll          = exports.set;
+AndroidVolume.prototype.setAll          = AndroidVolume.prototype.set;
 AndroidVolume.prototype.setDTMF         = createSetVolume('setDTMF');
 AndroidVolume.prototype.setMusic        = createSetVolume('setMusic');
 AndroidVolume.prototype.setNotification = createSetVolume('setNotification');
