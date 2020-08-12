@@ -1,37 +1,37 @@
 var exec = require('cordova/exec');
 
 function createGetVolume(funcName) {
-  return function(success, error) {
-    success = success || function(){};
-    error = error || function(){};
-    exec(success, error, 'AndroidVolume', funcName, []);
-  }
+	return function(success, error) {
+		success = success || function(){};
+		error = error || function(){};
+		exec(success, error, 'AndroidVolume', funcName, []);
+	}
 }
 
 function createSetVolume(funcName) {
-  return function(volume, showToast, success, error) {
-    showToast = showToast || false;
-    success = success || function(){};
-    error = error || function(){}
-    exec(success, error, 'AndroidVolume', funcName, [volume, showToast]);
-  }
+	return function(volume, showToast, success, error) {
+		showToast = showToast || false;
+		success = success || function(){};
+		error = error || function(){}
+		exec(success, error, 'AndroidVolume', funcName, [volume, showToast]);
+	}
 }
 
 function onVolumeUpdate(info) {
-  cordova.fireWindowEvent('volume', info);
+	cordova.fireWindowEvent('volume', info);
 }
 
 function onVolumeError(e) {
-  console.error('Failed to initialize android volume event handler: ' + e);
+	console.error('Failed to initialize android volume event handler: ' + e);
 }
 
 const volumeEventHandler = cordova.addWindowEventHandler('volume');
 volumeEventHandler.onHasSubscribersChange = function() {
-  if (volumeEventHandler.numHandlers === 1) {
-    exec(onVolumeUpdate, onVolumeError, 'AndroidVolume', 'registerVolumeObserver', []);
-  } else if (volumeEventHandler.numHandlers === 0) {
-    exec(null, null, 'AndroidVolume', 'unregisterVolumeObserver', []);
-  }
+	if (volumeEventHandler.numHandlers === 1) {
+		exec(onVolumeUpdate, onVolumeError, 'AndroidVolume', 'registerVolumeObserver', []);
+	} else if (volumeEventHandler.numHandlers === 0) {
+		exec(null, null, 'AndroidVolume', 'unregisterVolumeObserver', []);
+	}
 }
 
 exports.getAlarm        = createGetVolume('getAlarm');
