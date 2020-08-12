@@ -1,3 +1,22 @@
+var exec = require('cordova/exec');
+
+function createGetVolume(funcName) {
+  return function(success, error) {
+    success = success || function(){};
+    error = error || function(){};
+    exec(success, error, 'AndroidVolume', funcName, []);
+  }
+}
+
+function createSetVolume(funcName) {
+  return function(volume, showToast, success, error) {
+    showToast = showToast || false;
+    success = success || function(){};
+    error = error || function(){}
+    exec(success, error, 'AndroidVolume', funcName, [volume, showToast]);
+  }
+}
+
 function onVolumeUpdate(info) {
   cordova.fireWindowEvent('volume', info);
 }
