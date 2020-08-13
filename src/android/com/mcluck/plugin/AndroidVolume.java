@@ -8,8 +8,12 @@ import org.json.JSONException;
 import android.content.Context;
 import android.media.AudioManager;
 import android.widget.Toast;
+import java.lang.SecurityException;
 
 public class AndroidVolume extends CordovaPlugin {
+
+	private AndroidVolumeObserver volumeObserver = null;
+
 	@Override
 	public boolean execute(
 		String action,
@@ -61,6 +65,12 @@ public class AndroidVolume extends CordovaPlugin {
 		} else if ("getAlarm".equals(action)) {
 			getAlarmVolume(callbackContext);
 			return true;
+		} else if ("registerVolumeObserver".equals(action)) {
+			registerVolumeObserver(callbackContext);
+			return true;
+		} else if ("unregisterVolumeObserver".equals(action)) {
+			unregisterVolumeObserver(callbackContext);
+			return true;
 		}
 
 		return false;
@@ -86,7 +96,14 @@ public class AndroidVolume extends CordovaPlugin {
 					double percent = (double)volume / 100;
 					newVolume = (int)(max * percent);
 				}
-				manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				try {
+					manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				} catch (SecurityException se) {
+					if (_callbackContext != null) {
+						_callbackContext.error(se.getMessage());
+					}
+					return;
+				}
 				if (showToast) {
 					String volumeLabel = (volumeType.length() > 0 ? volumeType + " " : "") +  "Volume: " + String.valueOf(volume);
 					Toast.makeText(
@@ -217,5 +234,24 @@ public class AndroidVolume extends CordovaPlugin {
 		CallbackContext callbackContext
 	) {
 		setVolume(AudioManager.STREAM_VOICE_CALL, "Voice Call", volume, showToast, callbackContext);
+	}
+
+	private void registerVolumeObserver(CallbackContext callbackContext) {
+		if (volumeObserver == null) {
+			final Context context = cordova.getActivity();
+			volumeObserver = new AndroidVolumeObserver(context, callbackContext);
+			context
+				.getContentResolver()
+				.registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, volumeObserver);
+		}
+	}
+
+	private void unregisterVolumeObserver(CallbackContext callbackContext) {
+		if (volumeObserver != null) {
+			final Context context = cordova.getActivity();
+			context.getContentResolver().unregisterContentObserver(volumeObserver);
+			volumeObserver.release();
+			volumeObserver = null;
+		}
 	}
 }
