@@ -8,6 +8,7 @@ import org.json.JSONException;
 import android.content.Context;
 import android.media.AudioManager;
 import android.widget.Toast;
+import java.lang.SecurityException;
 
 public class AndroidVolume extends CordovaPlugin {
 
@@ -95,7 +96,14 @@ public class AndroidVolume extends CordovaPlugin {
 					double percent = (double)volume / 100;
 					newVolume = (int)(max * percent);
 				}
-				manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				try {
+					manager.setStreamVolume(streamType, newVolume, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+				} catch (SecurityException se) {
+					if (_callbackContext != null) {
+						_callbackContext.error(se.getMessage());
+					}
+					return;
+				}
 				if (showToast) {
 					String volumeLabel = (volumeType.length() > 0 ? volumeType + " " : "") +  "Volume: " + String.valueOf(volume);
 					Toast.makeText(
